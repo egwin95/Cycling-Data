@@ -11,12 +11,12 @@
 
 _The follow six step process was followed for this case study:_
 
-### [Ask](#1- Ask)
-### [Prepare](#2- Prepare)
-### [Process](#3- Process)
-### [Analyze](#4- Analyze)
-### [Share](#5- Share)
-### [Act](#6- Act)
+### [Ask](#1-ask)
+### [Prepare](#2-prepare)
+### [Process](#3-process)
+### [Analyze](#4-analyze)
+### [Share](#5-share)
+### [Act](#6-act)
 
 ## Scenario
 You are a junior data analyst working in the marketing analyst team at Cyclistic, a bike-share company in Chicago. The director
