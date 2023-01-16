@@ -302,6 +302,8 @@ GROUP BY ending_station_name;
 
 ### [Cyclistic Data Analysis Dashboard]
 (https://public.tableau.com/views/CyclingData_16737315586610/Dashboard6?:language=en-US&:display_count=n&:origin=viz_share_link)
+(![Dashboard 6](https://user-images.githubusercontent.com/42590575/212768785-ac0f8294-9df3-4ab8-b38a-2f6e4094dcea.png)
+
 
 
 
