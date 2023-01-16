@@ -45,7 +45,7 @@ The dataset has 13 CSV files, this data follows the ROCCC approach:
 
 ## 3. Process
 
-Data cleaning was done using SQL in Google BigQuery, first step was to take all twelve CSV files and combine them into one large database
+Data cleaning was done using SQL in Google BigQuery, these initial steps are queries used to prepare the data for cleaning. First step was to take all twelve CSV files and combine them into one large database
 ```
 CREATE TABLE Tripdata_2022.combined_tripdata AS
 SELECT *
@@ -75,4 +75,57 @@ FROM (
      SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_December
      );
 ```
+
+Used DISTINCT on ride_id so no further cleaning was necessary, then used another query to determine the different ride_types:
+```
+SELECT DISTINCT rideable_type
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata;
+```
+Next step was to perform a check on started_at and ended_at data sets to make sure rides that are greater than one minute and less than twenty-four hours are shown in our results:
+```
+SELECT *
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+WHERE TIMESTAMP_DIFF(ended_at, started_at, MINUTE) <= 1 OR
+   TIMESTAMP_DIFF(ended_at, started_at, MINUTE) >= 1440;
+```
+Next I checked for any naming errors for start_station name and ID and end_station name and ID:
+```
+SELECT start_station_name, COUNT(*)
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+GROUP BY start_station_name
+ORDER BY start_station_name;
+
+SELECT end_station_name, COUNT(*)
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+GROUP BY end_station_name
+ORDER BY end_station_name;
+
+SELECT COUNT(DISTINCT(start_station_name)) AS startName,
+    COUNT(DISTINCT(end_station_name)) AS endName,
+    COUNT(DISTINCT(start_station_id)) AS startID,
+    COUNT(DISTINCT(end_station_id)) AS endID,
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata;
+```
+For this step I checked for the amount of rows that had NULL values, these rows will be removed later during our cleaning query set:
+```
+SELECT rideable_type, count(*) as num_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+WHERE start_station_name IS NULL AND start_station_id IS NULL OR
+    end_station_name IS NULL AND end_station_id IS NULL 
+GROUP BY rideable_type;
+```
+NULLS in start_lat/lng and end_lat/lng:
+```
+SELECT * FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+WHERE start_lat IS NULL OR
+      start_lng IS NULL OR
+      end_lat IS NULL OR
+      end_lng IS NULL;
+```
+Last pre-cleaning step is to verify that there are only two member types in the member_casual column:
+```
+SELECT DISTINCT member_casual
+FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata;
+```
+
 
