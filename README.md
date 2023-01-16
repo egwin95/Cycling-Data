@@ -127,7 +127,7 @@ Last pre-cleaning step is to verify that there are only two member types in the 
 SELECT DISTINCT member_casual
 FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata;
 ```
-###4. Analyze
+## 4. Analyze
 [Back to Top](#author-Earl-Gwin)
 
 - [Cleaning](#Cleaning)
