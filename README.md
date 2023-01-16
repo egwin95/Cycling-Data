@@ -127,5 +127,176 @@ Last pre-cleaning step is to verify that there are only two member types in the 
 SELECT DISTINCT member_casual
 FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata;
 ```
+###4. Analyze
+[Back to Top](#author-Earl-Gwin)
+
+- [Cleaning](#Cleaning)
+- [Ride Type Total](#Ride-Type-Total)
+- [Monthly Ride Amount](#Monthly-Ride-Amount)
+- [Daily Ride Amount](#Daily-Ride-Amount)
+- [Hourly Ride Amount](#Hourly-Ride-Amount)
+- [Avg Daily Ride Length](#Avg-Daily-Ride-Length)
+- [Starting Station for Casuals/Members](#Starting-Station-for-Casuals/Members)
+- [Ending Station for Casuals/Members](#Ending-Station-for-Casuals/Members)
+
+
+### Cleaning:
+
+After the pre-cleaning we now have the necessary steps needed to clean up the data for a better analysis. First step is to find all classic bikes that do not begin or end at a docking station. These data points are not valuable because classic bikes are not able to be locked anywhere, they must be taken from and left at a docking station for the next user.
+```
+CREATE TABLE Tripdata_2022.null_station_names AS (SELECT ride_id AS bad_ride_id
+FROM (SELECT ride_id, start_station_name, start_station_id,end_station_name, end_station_id
+      FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata 
+        WHERE rideable_type = 'docked_bike' OR rideable_type = 'classic_bike')
+        WHERE start_station_name IS NULL AND start_station_id IS NULL OR 
+end_station_name IS NULL AND end_station_id IS NULL);
+```
+
+Next step is to remove all the rows from the previous query and also remove any rows that have a NULL value for Longitude and Latitude:
+```
+CREATE TABLE Tripdata_2022.cleaned_station_names AS
+(
+  SELECT * 
+  FROM cycling-tripdata-2022.Tripdata_2022.combined_tripdata
+  LEFT JOIN cycling-tripdata-2022.Tripdata_2022.null_station_names
+  ON ride_id = bad_ride_id
+  WHERE bad_ride_id IS NULL AND
+    start_lat IS NOT NULL AND
+    start_lng IS NOT NULL AND
+    end_lat IS NOT NULL AND
+    end_lng IS NOT NULL
+);
+```
+Here were are  replacing all instances of Docked_Bike with Classic_Bike. This is becaused Docked_Bike is the old name for Classic_Bike so these data sets are outdated and no longer useful:
+```
+SELECT ride_id, REPLACE (rideable_type, 'docked_bike', 'classic_bike') AS ride_type
+FROM cycling-tripdata-2022.Tripdata_2022.cleaned_station_names
+```
+In this step electric bikes are the only type that do not need to have a starting or ending location, because of this users are able to leave the bike anywhere as long as it is locked up. In this query we will be replacing the NULL starting and ending location values with "Bike Locked":
+```
+SELECT started_at, ended_at, IFNULL(NULL, "Bike Locked")
+FROM cycling-tripdata-2022.Tripdata_2022.cleaned_station_names;
+```
+
+We will now create a new column for date and ride length:
+```
+CREATE TABLE cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned AS
+(
+  SELECT ride_id,
+    REPLACE(rideable_type, 'docked_bike', 'classic_bike') AS ride_type,
+    started_at,
+    ended_at,
+    IFNULL(TRIM(REPLACE(start_station_name, '(Temp)', '')), 'On Bike Lock') AS starting_station_name,
+    IFNULL(TRIM(REPLACE(end_station_name, '(Temp)', '')), 'On Bike Lock') AS ending_station_name,
+    CASE
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 1 THEN 'Sun'
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 2 THEN 'Mon'
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 3 THEN 'Tues'
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 4 THEN 'Wed'
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 5 THEN 'Thur'
+      WHEN EXTRACT(DAYOFWEEK FROM started_at) = 6 THEN 'Fri'
+      ELSE'Sat' 
+    END AS day,
+    CASE
+      WHEN EXTRACT(MONTH FROM started_at) = 1 THEN 'Jan'
+      WHEN EXTRACT(MONTH FROM started_at) = 2 THEN 'Feb'
+      WHEN EXTRACT(MONTH FROM started_at) = 3 THEN 'Mar'
+      WHEN EXTRACT(MONTH FROM started_at) = 4 THEN 'Apr'
+      WHEN EXTRACT(MONTH FROM started_at) = 5 THEN 'May'
+      WHEN EXTRACT(MONTH FROM started_at) = 6 THEN 'Jun'
+      WHEN EXTRACT(MONTH FROM started_at) = 7 THEN 'July'
+      WHEN EXTRACT(MONTH FROM started_at) = 8 THEN 'Aug'
+      WHEN EXTRACT(MONTH FROM started_at) = 9 THEN 'Sept'
+      WHEN EXTRACT(MONTH FROM started_at) = 10 THEN 'Oct'
+      WHEN EXTRACT(MONTH FROM started_at) = 11 THEN 'Nov'
+      ELSE 'Dec'
+    END AS month,
+    EXTRACT(DAY FROM started_at) as day,
+    EXTRACT(YEAR FROM started_at) AS year,
+    TIMESTAMP_DIFF(ended_at, started_at, MINUTE) AS ride_time_minutes,
+    start_lat,
+    start_lng,
+    end_lat,
+    end_lng,
+    member_casual AS member_type
+  FROM cycling-tripdata-2022.Tripdata_2022.cleaned_station_names
+);
+```
+Now our data is all cleaned and ready for the share process, in order to start that process we will need to create some queries to display results that we can use for our visualization software. These queries include:
+
+### Ride Type Total:
+```
+SELECT ride_type, member_type, count(*) AS amount_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+GROUP BY ride_type, member_type
+ORDER BY member_type, amount_of_rides DESC;
+```
+
+### Monthly Ride Amount:
+```
+SELECT member_type, month, COUNT(*) AS monthly_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+GROUP BY member_type, month;
+```
+
+### Daily Ride Amount;
+```
+SELECT member_type, day_of_week, COUNT(*) AS daily_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+GROUP BY member_type, day_of_week;
+```
+
+### Hourly Ride Amount:
+```
+SELECT member_type, EXTRACT(HOUR FROM started_at) AS time_daily, COUNT(*) AS hourly_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+GROUP BY member_type, time_daily;
+```
+
+### Avg Daily Ride Length;
+```
+SELECT member_type, day_of_week,ROUND(AVG(ride_time_minutes),0) AS average_time,
+AVG(AVG(ride_time_minutes)) OVER(PARTITION BY member_type) AS combined_avg_ride_time
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+GROUP BY member_type, day_of_week;
+```
+
+### Starting Station for Casuals/Members:
+_Casuals_
+```
+SELECT starting_station_name, AVG(start_lat) AS start_lat, AVG(start_lng) AS start_lng,
+COUNT(*) AS number_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+WHERE member_type = 'casual' AND starting_station_name != 'On Bike Lock'
+GROUP BY starting_station_name;
+```
+_Members_
+```
+SELECT starting_station_name, AVG(start_lat) AS start_lat, AVG(start_lng) AS start_lng,
+COUNT(*) AS number_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+WHERE member_type = 'member' AND starting_station_name != 'On Bike Lock'
+GROUP BY starting_station_name;
+```
+
+### Ending Station for Casuals/Members:
+_Casuals_
+```
+SELECT ending_station_name, AVG(end_lat) AS end_lat, AVG(end_lng) AS end_lng,
+COUNT(*) AS number_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+WHERE member_type = 'casual' AND starting_station_name != 'On Bike Lock'
+GROUP BY ending_station_name;
+```
+_Members_
+```
+SELECT ending_station_name, AVG(end_lat) AS end_lat, AVG(end_lng) AS end_lng,
+COUNT(*) AS number_of_rides
+FROM cycling-tripdata-2022.Tripdata_2022.combined_data_cleaned
+WHERE member_type = 'member' AND starting_station_name != 'On Bike Lock'
+GROUP BY ending_station_name;
+```
+
+
 
 
