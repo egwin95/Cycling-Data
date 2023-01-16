@@ -42,3 +42,37 @@ The dataset has 13 CSV files, this data follows the ROCCC approach:
 -  Comprehensive: Data is taken at an hourly level, when bikes are checked out, checked in or docked the data is updated with latitude and longitude of the starting and ending station the bike was docked at.
 -  Current: Data is from 2022 and tracks data over the course of each month
 -  Cited: Cyclistic
+
+## 3. Process
+
+Data cleaning was done using SQL in Google BigQuery, first step was to take all twelve CSV files and combine them into one large database
+```
+CREATE TABLE Tripdata_2022.combined_tripdata AS
+SELECT *
+FROM (
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_January
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_February
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_March
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_April
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_May
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_June
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_July
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_August
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_September
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_October
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_November
+     UNION ALL 
+     SELECT * FROM cycling-tripdata-2022.Tripdata_2022.Tripdata_December
+     );
+```
+
