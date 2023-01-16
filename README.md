@@ -9,7 +9,7 @@
 
 #
 
-_ The follow six step process was followed for this case study_
+_The follow six step process was followed for this case study:_
 
 ### [Ask](#1- Ask)
 ### [Prepare](#2- Prepare)
@@ -31,3 +31,14 @@ visualizations.
   
  Primary Stakeholders: Lily Moreno
  Secondary Stakeholders: Cyclistic marketing analytics team, Cyclistic executive team
+ 
+## 2. Prepare
+Data Source: Cyclistic's historical trip data over the last 12 months
+
+The dataset has 13 CSV files, this data follows the ROCCC approach:
+
+- Reliability: The data is from Cyclistic's historical trip data, this data is based off public access to the Bike-Share company and determines trip time based on where the bike was docked.
+-  Original: Data is taken from the Bike-Share company
+-  Comprehensive: Data is taken at an hourly level, when bikes are checked out, checked in or docked the data is updated with latitude and longitude of the starting and ending station the bike was docked at.
+-  Current: Data is from 2022 and tracks data over the course of each month
+-  Cited: Cyclistic
