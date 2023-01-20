@@ -301,8 +301,7 @@ GROUP BY ending_station_name;
 [Back to Top](#author-Earl-Gwin)
 
 ### [Cyclistic Data Analysis Dashboard](https://public.tableau.com/views/CyclingData_16737315586610/Dashboard6?:language=en-US&:display_count=n&:origin=viz_share_link)
-![Dashboard 6](https://user-images.githubusercontent.com/42590575/212768785-ac0f8294-9df3-4ab8-b38a-2f6e4094dcea.png)
-
+![Dashboard 1](https://user-images.githubusercontent.com/42590575/213618404-be67957e-c37b-4270-8b07-4e86b2954e86.png)
 
 
 
