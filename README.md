@@ -306,3 +306,16 @@ GROUP BY ending_station_name;
 ### [Cyclistic Data Presentation](https://public.tableau.com/views/CyclisticDataPresentation/Story1?:language=en-US&:display_count=n&:origin=viz_share_link)
 ![Story 1](https://user-images.githubusercontent.com/42590575/213618698-9c9d5bdd-3a50-4e0a-a595-9b1578514f2d.png)
 
+## 6. Act
+[Back to Top](#author-Earl-Gwin)
+
+Conclusions based on analysis:
+1. Casual riders on average tend to ride longer than Cyclistic members
+2. Casual riders prefer electric bikes while Member riders prefer the Casual bikes
+3. Casual riders seem to use the Bike-share system more leisurely than members do. Members are more active on weekdays which points to them using them more often for transportation to and from work
+
+Digital Marketing recommendations based on analysis:
+
+1. Majority of the Casual riders prefer Electric bikes, putting more marketing efforts into promoting them will aide in converting them to members
+2. Casual riders prefer to ride during the warmer months and on the weekends, therefore more incentives should be offered during the weekend and summer months
+3. Casual riders have preferred starting stations, focusing marketing and ad campaigns in those locations would also assist in converting them over to members
