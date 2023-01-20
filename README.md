@@ -300,8 +300,9 @@ GROUP BY ending_station_name;
 ## 5. Share
 [Back to Top](#author-Earl-Gwin)
 
-### [Cyclistic Data Analysis Dashboard](https://public.tableau.com/views/CyclingData_16737315586610/Dashboard6?:language=en-US&:display_count=n&:origin=viz_share_link)
+### [Cyclistic Data Analysis Dashboard](https://public.tableau.com/views/CyclisticBike-ShareDashboard_16741892865730/Dashboard1?:language=en-US&:display_count=n&:origin=viz_share_link)
 ![Dashboard 1](https://user-images.githubusercontent.com/42590575/213618404-be67957e-c37b-4270-8b07-4e86b2954e86.png)
 
-
+### [Cyclistic Data Presentation](https://public.tableau.com/views/CyclisticDataPresentation/Story1?:language=en-US&:display_count=n&:origin=viz_share_link)
+![Story 1](https://user-images.githubusercontent.com/42590575/213618698-9c9d5bdd-3a50-4e0a-a595-9b1578514f2d.png)
 
